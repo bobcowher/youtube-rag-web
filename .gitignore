@@ -1,2 +1,4 @@
 uploads
 *.csv
+*.pyc
+config.txt

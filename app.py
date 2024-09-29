@@ -9,6 +9,12 @@ if not(os.path.exists(upload_folder)):
 
 model = RagModel()
 
+try:
+    model.load_embeddings()
+    print("Succesfully loaded embeddings on startup")
+except:
+    print("Unable to load embeddings")
+
 app = Flask(__name__)
 
 app.config['UPLOAD_FOLDER'] = upload_folder
@@ -28,9 +34,9 @@ def chat():
 def send_message():
     user_message = request.form['message'].lower()
 
-    # TODO: Call the model
+    response, references = model.ask(user_message, return_answer_only=False)
 
-    response = "hi"
+    response = response + "\n\n<strong>References(by relevance)</strong>\n" + references
 
     return jsonify({"response": response})
 
@@ -63,6 +69,7 @@ def upload_file_post():
 def process_files():
     
     model.process_files()
+    model.load_embeddings()
     return jsonify({"status": "Files processed successfully!"})
 
 
